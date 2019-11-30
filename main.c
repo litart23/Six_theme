@@ -75,7 +75,7 @@ int Y;
 
 bool end_package = false; 
 
-char details[10] = {'R','G','B','B','B','R','R','R','G','B'};
+char details[10] = {'R','G','B','R','B','R','R','R','G','B'};
 
 int current_state;
 
@@ -89,7 +89,7 @@ void out_mass(){
 }
 	
 void detect_colour(int i){
-		printf("state is  %i\n",current_state);
+	//	printf("state is  %c\n",current_state);
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (current_state==Q0){
 		//###
@@ -100,7 +100,7 @@ void detect_colour(int i){
 		printf("\rColour detecting...\n");
 		sleep(1);
 		//###
-		printf("state is - %c\n",details[i]);
+		printf("Colour is - %c\n",details[i]);
 	switch (details[i]){
 		case 'R':
 	current_state=P1;
@@ -121,16 +121,16 @@ void detect_colour(int i){
 	//printf("current_state will P2 \n");
 		break;
 	default: ERROR;
-	printf("current_state will ERROR \n");
+	printf("state will ERROR \n");
 	break;			
 		}
 		
 } else current_state=ERROR;
 
 	if(current_state==P1){ //состояние Р1 (+)
-	SetConsoleTextAttribute(hConsole, (WORD) ((4 << 4) | 0));
-	printf("SORT RED DETAILS \n");
-	SetConsoleTextAttribute(hConsole, (WORD) ((White << 4) | Black ));
+	SetConsoleTextAttribute(hConsole, (WORD) ((12 << 4) | 15));
+	printf("SORT RED DETAIL \n");
+	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
 		if(R1=='R'){
 	current_state=P0;
 				Y=1;
@@ -141,9 +141,9 @@ void detect_colour(int i){
 		}
 		
 		if(current_state==P2){ //состояние Р2 (+)
-	SetConsoleTextAttribute(hConsole, (WORD) ((1 << 4) | 0));
-	printf("SORT Blue DETAILS \n");
-	SetConsoleTextAttribute(hConsole, (WORD) ((White << 4) | Black ));
+	SetConsoleTextAttribute(hConsole, (WORD) ((9 << 4) | 15));
+	printf("SORT Blue DETAIL \n");
+	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14));
 		if(R3=='B'){
 	current_state=P0;
 				Y=1;
@@ -155,9 +155,9 @@ void detect_colour(int i){
 		
 		if(current_state==P0){ //состояние Р1 (+)
 		if(R2=='G'&&Y==0){
-			SetConsoleTextAttribute(hConsole, (WORD) ((2 << 4) | 0));
-	printf("SORT Green DETAILS \n");
-	SetConsoleTextAttribute(hConsole, (WORD) ((White << 4) | Black ));
+			SetConsoleTextAttribute(hConsole, (WORD) ((2 << 4) | 15));
+	printf("SORT Green DETAIL \n");
+	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
 	current_state=P0;
 		Y=1;
 		sleep(1);
@@ -171,7 +171,7 @@ void detect_colour(int i){
 		}
 		
 		if(current_state==Q1&&U==U1||U2||U3){
-			printf("current_state is Q1 \n");
+			printf(" State is Q1 \n");
 					if(U1==1){
 				printf	(" will pack Red \n");
 				sleep(1);
@@ -196,7 +196,7 @@ void detect_colour(int i){
 	
 	if (current_state==E1&&F1==1){
 		printf	(" Packed Red. \n");
-		worms(4);
+		worms(12);
 		current_state=Q2;
 		F1=0;
 		}
@@ -207,8 +207,8 @@ void detect_colour(int i){
 		F2=0;
 		}
 		if (current_state==E3&&F3==1){
-		printf	(" Packed blue.  \n");
-		worms(1);
+		printf	(" Packed Blue.  \n");
+		worms(9);
 		current_state=Q2;
 		F3=0;
 		}
@@ -246,7 +246,9 @@ void print_char(int get_num)
 }
 int main()
 {   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-system("color F0");
+system("color 8E");
+//SetConsoleTextAttribute(hConsole, (WORD) ((LightGray << 4) | Black ));
+//sleep(5);
 	//printf("Lets begin start our curse work\n");
 	current_state=Q0;
 	out_mass();
@@ -266,7 +268,7 @@ void worms(int colo){
 //	if (current_state==E1){
 	int a = 100000;
 	for(int i=0;i<3;i++){
-		SetConsoleTextAttribute(hConsole, (WORD) ((colo << 4) | 0));
+		SetConsoleTextAttribute(hConsole, (WORD) ((colo << 4) | 15));
 		//printf	("Packed fucking red detail\n");
 		printf("\r|~      |");
 		usleep(a);
@@ -300,7 +302,8 @@ void worms(int colo){
 		}
 		
 		printf("\r|FINISHED|");
-		SetConsoleTextAttribute(hConsole, (WORD) ((White << 4) | Black ));
+	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
+	//system("color F15");
 		printf("\n");
 }
 
