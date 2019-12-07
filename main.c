@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "windows.h" //for sleep
 #include <time.h>   //Для nanosleep
+#include <string.h>
 enum ConsoleColor {
 Black = 0,
 Blue = 1,
@@ -21,67 +22,34 @@ Yellow = 14,
 White = 15
 };
 
-#define TRUE 1
-#define FALSE 0
-
-//сигнал детектора цвета
-#define D0 // empty
-#define D1 //red
-#define D2 //green
-#define D3 //blue
-
-//начальное состояние системы
+//start state
 #define Q0 1
-//состояние после сортировки
+//after sorting state
 #define Q1  5
-//состояние окончания работы
+//finish state
 #define Q2 9
-//состояние остановки
+//stop state
 #define STOP 0
 
-//состояния распределяющей пластины
+//sorting machine state
 #define P0  2//red
 #define P1  3//green
 #define P2  4//blue
 
-//сигнал датчика прохождения нужной детали
-char R1; //red
-char R2; //green
-char R3; //blue 
 
-//сигнал готовности к упаковке деталей 
-int U=1;
-int U1=0; //red
-int U2=0; //green
-int U3=0; //blue
-
-// сигнал того что деталь упакована
-int F1;  //r
-int F2;	//g
-int F3;	//b
-
-//сигнал того, что деталь отсортирована правильно
-int Y;
-
-//сигнал того, что детали кончились
-#define Z
-//сигнал подачи новой детали
-#define N
-
-//состояние сортировки деталей
+//sort details state
 #define E1	 6//r
 #define E2	 7//g
 #define E3	 8//b
 
 bool end_package = false; 
 
-char details[10] = {'R','G','B','R','B','R','R','R','G','B'};
+
 
 int current_state;
 
 void out_mass(){
-	Y=0;
-	printf("Out_mass function \n");
+	printf(" Start \n");
 	int count=0;
 	for(count=0;count<10;count++){
 	detect_colour(count);
@@ -89,139 +57,188 @@ void out_mass(){
 }
 	
 void detect_colour(int i){
+	
+	
+	    FILE *fin; 
+
+char st0[14];
+char st1[14];
+char st2[14];
+char st3[14];
+char st4[14];
+char st5[14];
+char st6[14];
+
+char set0[14] = "00000000000001";
+char set1R[14] = "10000000000000";
+char set1G[14] = "01000000000000";
+char set1B[14] = "00100000000000";
+
+char set2R[14] = "00010000000000";
+char set2G[14] = "00001000000000";
+char set2B[14] = "00000100000000";
+
+char set3Y[14] = "00000010000000";
+
+char set4R[14] = "00000001000000";
+char set4G[14] = "00000000100000";
+char set4B[14] = "00000000010000";
+
+char set5R[14] = "00000000001000";
+char set5G[14] = "00000000000100";
+char set5B[14] = "00000000000010";
+char set6Z[1]="\0";
+
+
+fin = fopen("signals.txt", "r");
+fgets ( st0, 20, fin );
+fgets ( st1, 20, fin );
+fgets ( st2, 20, fin );
+fgets ( st3, 20, fin );
+fgets ( st4, 20, fin );
+fgets ( st5, 20, fin );
+fgets ( st6, 20, fin );
+st0[strlen(st0)-1] = '\0';
+ st1[strlen(st1)-1] = '\0';
+ st2[strlen(st2)-1] = '\0';
+ st3[strlen(st3)-1] = '\0';
+ st4[strlen(st4)-1] = '\0';
+ st5[strlen(st5)-1] = '\0';
+st6[strlen(st6)-1] = '\0';
+ 
+   
+//   // Сравниваем две строки
+//   if (strcmp (set1, st1)==0){
+//      printf("good\n");
+//     }
+//    else {
+//      printf("bad\n");
+//        }
+//		
 	//	printf("state is  %c\n",current_state);
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (current_state==Q0){
 		//###
-		printf("\rColour detecting.");
+		printf("\r Colour detecting.");
 		sleep(1);
-		printf("\rColour detecting..");
+		printf("\r Colour detecting..");
 		sleep(1);
-		printf("\rColour detecting...\n");
+		printf("\r Colour detecting...\n");
 		sleep(1);
-		//###
-		printf("Colour is - %c\n",details[i]);
-	switch (details[i]){
-		case 'R':
+		//printf(" Colour is - %c\n",details[i]);
+
+	}
+	else current_state=ERROR;
+		
+	
+if (strcmp (set1R, st1)==0){
 	current_state=P1;
 	sleep(1);
-	R1='R';
-	//printf("current_state will P1 \n");
-		break;
-		case 'G':
-	current_state=P0;
-	sleep(1);
-	R2='G';
-	//printf("current_state will P0 \n");
-		break;
-		case 'B':
+	
+	printf("Red detail has been detecting\n");
+}
+if (strcmp (set1G, st1)==0){
 	current_state=P2;
 	sleep(1);
-	R3='B';
-	//printf("current_state will P2 \n");
-		break;
-	default: ERROR;
-	printf("state will ERROR \n");
-	break;			
-		}
-		
-} else current_state=ERROR;
+	
+	printf("Green detail has been detecting\n");
+}
+if (strcmp (set1B, st1)==0){
+	current_state=P0;
+	sleep(1);
+	
+	printf("Blue detail has been detecting\n");
+}	
+//else current_state=ERROR;
 
 	if(current_state==P1){ //состояние Р1 (+)
 	SetConsoleTextAttribute(hConsole, (WORD) ((12 << 4) | 15));
-	printf("SORT RED DETAIL \n");
+	printf(" SORT RED DETAIL \n");
 	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
-		if(R1=='R'){
+		if (strcmp (set2R, st2)==0){
 	current_state=P0;
-				Y=1;
 			sleep(1);
-			U1=1; //датчик 
+			//U1=1; //датчик 
 			}
 	else current_state==ERROR;
 		}
 		
 		if(current_state==P2){ //состояние Р2 (+)
 	SetConsoleTextAttribute(hConsole, (WORD) ((9 << 4) | 15));
-	printf("SORT Blue DETAIL \n");
+	printf(" SORT Blue DETAIL \n");
 	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14));
-		if(R3=='B'){
+		if (strcmp (set2B, st2)==0){
 	current_state=P0;
-				Y=1;
 			sleep(1);
-			U3=1; //датчик 
+			//U3=1; //датчик 
 			}
 	else current_state==ERROR;
 		}
 		
 		if(current_state==P0){ //состояние Р1 (+)
-		if(R2=='G'&&Y==0){
+		if (strcmp (set2G, st2)==0){
 			SetConsoleTextAttribute(hConsole, (WORD) ((2 << 4) | 15));
-	printf("SORT Green DETAIL \n");
+	printf(" SORT Green DETAIL \n");
 	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
 	current_state=P0;
-		Y=1;
 		sleep(1);
-			U2=1; //датчик 
+			//U2=1; //датчик 
 		}
-			if(Y==1){
+			if (strcmp (set3Y, st3)==0){
 	current_state=Q1;
-				Y=0;
 				}
 	else current_state=ERROR;
 		}
 		
-		if(current_state==Q1&&U==U1||U2||U3){
+		if(current_state==Q1){
 			printf(" State is Q1 \n");
-					if(U1==1){
-				printf	(" will pack Red \n");
+					if (strcmp (set4R, st4)==0){
+				printf	(" Will pack Red \n");
 				sleep(1);
 				current_state=E1;
-				F1=U1;
-				U1=0;
 				}
-					if(U2==1){
-				printf	(" will pack Green \n");
+					if (strcmp (set4G, st4)==0){
+				printf	(" Will pack Green \n");
 				current_state=E2;
-				F2=U2;
-				U2=0;
 				}
-					if(U3==1){
-				printf	(" will pack Blue \n");
+					if (strcmp (set4B, st4)==0){
+				printf	(" Will pack Blue \n");
 				current_state=E3;
-				F3=U3;
-				U3=0;
 				}
 			}
 			else current_state=ERROR;
 	
-	if (current_state==E1&&F1==1){
+	if (current_state==E1){
+		if (strcmp (set5R, st5)==0){
 		printf	(" Packed Red. \n");
 		worms(12);
 		current_state=Q2;
-		F1=0;
 		}
-		if (current_state==E2&&F2==1){
+		if (strcmp (set5G, st5)==0){
 		printf	(" Packed Green.  \n");
 		worms(2);
 		current_state=Q2;
-		F2=0;
 		}
-		if (current_state==E3&&F3==1){
+		if (strcmp (set5B, st5)==0){
 		printf	(" Packed Blue.  \n");
 		worms(9);
 		current_state=Q2;
-		F3=0;
 		}
-		
+	}	
 		if(current_state==Q2){
 			printf	(" Detail arrived. \n");
-			current_state=Q0;
+			if (strcmp (set6Z, st6)==0){
+
+				printf	(" Conveer has empty. \n");
+				current_state=ERROR;
+			}
+			else current_state=Q0;
 		}
 		
 	
 		
 		if(current_state==ERROR){
-			printf("THE END \n");
+			printf(" THE END \n");
 			printf("\r3");
 			sleep(1);
 			printf("\r2");
@@ -239,11 +256,6 @@ void detect_colour(int i){
 }
 
 
-
-void print_char(int get_num)
-{ printf("Print_char function \n");
-	printf("num is %c\n", details[get_num]);
-}
 int main()
 {   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 system("color 8E");
