@@ -192,41 +192,51 @@ if (strcmp (set1B, st1)==0){
 		
 		if(current_state==Q1){
 			printf(" State is Q1 \n");
-					if (strcmp (set4R, st4)==0){
+					if (strcmp (set4R, st4)==0 && strcmp (set2R, st2)==0 ){
 				printf	(" Will pack Red \n");
-				sleep(1);
 				current_state=E1;
 				}
-					if (strcmp (set4G, st4)==0){
+					if (strcmp (set4G, st4)==0 && strcmp (set2G, st2)==0 ){
 				printf	(" Will pack Green \n");
 				current_state=E2;
 				}
-					if (strcmp (set4B, st4)==0){
+					if (strcmp (set4B, st4)==0 && strcmp (set2B, st2)==0){
 				printf	(" Will pack Blue \n");
 				current_state=E3;
 				}
+				
 			}
 			else current_state=ERROR;
+			
 	
 	if (current_state==E1){
-		if (strcmp (set5R, st5)==0){
+		if (strcmp (set5R, st5)==0&&strcmp (set4R, st4)==0){
 		printf	(" Packed Red. \n");
 		worms(12);
 		current_state=Q2;
 		}
-		if (strcmp (set5G, st5)==0){
+		}
+		if (current_state==E2&&strcmp (set4G, st4)==0){
+		if (strcmp (set5G, st5)==0 && strcmp (set4G, st4)==0){
 		printf	(" Packed Green.  \n");
 		worms(2);
 		current_state=Q2;
 		}
-		if (strcmp (set5B, st5)==0){
+		}
+		if (current_state==E3 ){
+		if (strcmp (set5B, st5)==0&& strcmp (set4B, st4)==0){
 		printf	(" Packed Blue.  \n");
 		worms(9);
 		current_state=Q2;
 		}
-	}	
+	}
+	if (current_state!=Q2){
+		current_state=ERROR;
+		}
+
 		if(current_state==Q2){
 			printf	(" Detail arrived. \n");
+			sleep(1);
 			if (strcmp (set6Z, st6)==0){
 
 				printf	(" Conveer has empty. \n");
