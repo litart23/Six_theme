@@ -57,8 +57,21 @@ void out_mass(){
 }
 	
 void detect_colour(int i){
-	
-	
+	int D1=0;
+	int D2=0;
+	int D3=0;
+	int R1=0;
+	int R2=0;
+	int R3=0;
+	int Y=0;
+	int U1=0;
+	int U2=0;
+	int U3=0;
+	int F1=0;
+	int F2=0;
+	int F3=0;
+	int N=0;
+	int Z=1;
 	    FILE *fin; 
 
 char st0[14];
@@ -69,7 +82,10 @@ char st4[14];
 char st5[14];
 char st6[14];
 
-char set0[14] = "00000000000001";
+// прописать состояния датчиков bool&
+//int R
+
+char set0[14] =  "00000000000001";
 char set1R[14] = "10000000000000";
 char set1G[14] = "01000000000000";
 char set1B[14] = "00100000000000";
@@ -106,15 +122,13 @@ st0[strlen(st0)-1] = '\0';
  st5[strlen(st5)-1] = '\0';
 st6[strlen(st6)-1] = '\0';
  
-   
-//   // Сравниваем две строки
-//   if (strcmp (set1, st1)==0){
-//      printf("good\n");
-//     }
-//    else {
-//      printf("bad\n");
-//        }
-//		
+if (strcmp (set0, st0)==0){
+	N=1;
+	Z=0;
+}
+ if (N==1&&Z==0){
+	 current_state=Q0;
+	 }
 	//	printf("state is  %c\n",current_state);
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (current_state==Q0){
@@ -130,77 +144,129 @@ st6[strlen(st6)-1] = '\0';
 	}
 	else current_state=ERROR;
 		
-	
-if (strcmp (set1R, st1)==0){
+		
+	 if (current_state==Q0){
+		 N=0;
+		if (strcmp (set1R, st1)==0){
+			D1=1;
+			}
+	if (strcmp (set1G, st1)==0){
+			D2=1;
+	}
+	if (strcmp (set1B, st1)==0){
+			D3=1;
+	}
+		 }
+
+if (D1==1){
 	current_state=P1;
 	sleep(1);
-	
 	printf("Red detail has been detecting\n");
 }
-if (strcmp (set1G, st1)==0){
-	current_state=P2;
-	sleep(1);
-	
-	printf("Green detail has been detecting\n");
-}
-if (strcmp (set1B, st1)==0){
+if (D2==1){
 	current_state=P0;
 	sleep(1);
-	
+	printf("Green detail has been detecting\n");
+}
+if (D3==1){
+	current_state=P2;
+	sleep(1);
 	printf("Blue detail has been detecting\n");
 }	
 //else current_state=ERROR;
 
+
+
 	if(current_state==P1){ //состояние Р1 (+)
 	SetConsoleTextAttribute(hConsole, (WORD) ((12 << 4) | 15));
+	printf("Right damper has been UP \n");
 	printf(" SORT RED DETAIL \n");
 	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
-		if (strcmp (set2R, st2)==0){
-	current_state=P0;
-			sleep(1);
-			//U1=1; //датчик 
+	
+	if (strcmp (set2R, st2)==0){
+		printf("Current state will P0\n");
+			R1=1;
 			}
+		if (R1==1){
+	current_state=P0;
+	sleep(1);
+	
+}
 	else current_state==ERROR;
 		}
 		
 		if(current_state==P2){ //состояние Р2 (+)
 	SetConsoleTextAttribute(hConsole, (WORD) ((9 << 4) | 15));
+	printf("Left damper has been UP \n");
 	printf(" SORT Blue DETAIL \n");
 	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14));
 		if (strcmp (set2B, st2)==0){
-	current_state=P0;
-			sleep(1);
-			//U3=1; //датчик 
+		printf("Current state will P0\n");
+			R3=1;
 			}
+		if (R3==1){
+	current_state=P0;
+	sleep(1);
+	
+}
 	else current_state==ERROR;
 		}
 		
-		if(current_state==P0){ //состояние Р1 (+)
+		if(current_state==P0){
+ if (D2==1){
 		if (strcmp (set2G, st2)==0){
+		printf("Current state will P0\n");
+			R2=1;
+			}
+		if (R2==1){
+	sleep(1);
 			SetConsoleTextAttribute(hConsole, (WORD) ((2 << 4) | 15));
+	printf("Damper is not involved \n");
 	printf(" SORT Green DETAIL \n");
 	SetConsoleTextAttribute(hConsole, (WORD) ((8 << 4) | 14 ));
-	current_state=P0;
-		sleep(1);
-			//U2=1; //датчик 
+		}
+		}
+		if (R1==1){
+		printf("Right damper has been down\n");
+		}
+		if (R3==1){
+		printf("Left damper has been down\n");
 		}
 			if (strcmp (set3Y, st3)==0){
-	current_state=Q1;
+	Y=1;
 				}
+				if(Y=1){
+					current_state=Q1;
+					}
+				
 	else current_state=ERROR;
+	
+
 		}
 		
 		if(current_state==Q1){
 			printf(" State is Q1 \n");
-					if (strcmp (set4R, st4)==0 && strcmp (set2R, st2)==0 ){
+			//
+			if(strcmp (set4R, st4)==0){
+				U1=1;
+				}
+					if (U1==1 && R1==1 ){
 				printf	(" Will pack Red \n");
 				current_state=E1;
 				}
-					if (strcmp (set4G, st4)==0 && strcmp (set2G, st2)==0 ){
+				//
+				if(strcmp (set4G, st4)==0){
+				U2=1;
+				}
+					if (U2==1 && R2==1 ){
 				printf	(" Will pack Green \n");
 				current_state=E2;
 				}
-					if (strcmp (set4B, st4)==0 && strcmp (set2B, st2)==0){
+				//
+				if(strcmp (set4B, st4)==0){
+				U3=1;
+				}
+					if (U3==1 && R3==1 ){
 				printf	(" Will pack Blue \n");
 				current_state=E3;
 				}
@@ -210,21 +276,31 @@ if (strcmp (set1B, st1)==0){
 			
 	
 	if (current_state==E1){
-		if (strcmp (set5R, st5)==0&&strcmp (set4R, st4)==0){
+		if(strcmp (set5R, st5)==0){
+		F1=1;
+				}
+		if (F1==1&&U1==1){
 		printf	(" Packed Red. \n");
 		worms(12);
 		current_state=Q2;
 		}
 		}
-		if (current_state==E2&&strcmp (set4G, st4)==0){
-		if (strcmp (set5G, st5)==0 && strcmp (set4G, st4)==0){
+		
+		if (current_state==E2){
+			if(strcmp (set5G, st5)==0){
+		F2=1;
+				}
+		if (F2==1&&U2==1){
 		printf	(" Packed Green.  \n");
 		worms(2);
 		current_state=Q2;
 		}
 		}
 		if (current_state==E3 ){
-		if (strcmp (set5B, st5)==0&& strcmp (set4B, st4)==0){
+		if(strcmp (set5B, st5)==0){
+		F3=1;
+				}
+		if (F3==1&&U3==1){
 		printf	(" Packed Blue.  \n");
 		worms(9);
 		current_state=Q2;
@@ -238,9 +314,11 @@ if (strcmp (set1B, st1)==0){
 			printf	(" Detail arrived. \n");
 			sleep(1);
 			if (strcmp (set6Z, st6)==0){
-
+				Z=1;
+if(Z==1){
 				printf	(" Conveer has empty. \n");
 				current_state=ERROR;
+}
 			}
 			else current_state=Q0;
 		}
